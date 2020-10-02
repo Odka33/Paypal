@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Acheter via PayPal</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</head>
+<body>
+<div class="text-center" id="test-credential">
+    <h1 >Try with test credential</h1>
+    <div id="the-credentials" class="">
+
+    <p>Email : sb-w2eh433358621@personal.example.com</p>
+    <p>Password : NW4%3xvv </p>
+    </div>
+</div>
+
+<div id="payment-with-paypal">
+    <img src="estudio-bis-5-black-bl858-7-r-r.jpg" class="img-fluid mx-auto d-block" style="width: 750px;" alt="">
+<!-- Le conteneur des boutons PayPal -->
+<div class="text-center container-fluid" id="paypal-boutons"></div>
+</div>
+<!-- Importation de la SDK JavaScript PayPal -->
+<script src="https://www.paypal.com/sdk/js?client-id=ATO_7HpP8zOIw6P_pbASoB1hi3GUWzhILjBG_wxpAd-p0C08V-jKR01jOQkA1nZh3dDvtmpj6BFNtmOI"></script>
+<script>
+    paypal.Buttons({
+
+        // Configurer la transaction
+        createOrder : function (data, actions) {
+
+            // Les produits à payer avec leurs details
+            var produits = [
+                {
+                    name : "Produit 1",
+                    description : "Description du produit 1",
+                    quantity : 1,
+                    unit_amount : { value : 9.9, currency_code : "USD" }
+                },
+                {
+                    name : "Produit 2",
+                    description : "Description du produit 2",
+                    quantity : 1,
+                    unit_amount : { value : 8.0, currency_code : "USD" }
+                }
+            ];
+
+
+            // Le total des produits
+            var total_amount = produits.reduce(function (total, product) {
+                return total + product.unit_amount.value * product.quantity;
+            }, 0);
+
+            // La transaction
+            return actions.order.create({
+                purchase_units : [{
+                    items : produits,
+                    amount : {
+                        value : total_amount,
+                        currency_code : "USD",
+                        breakdown : {
+                            item_total : { value : total_amount, currency_code : "USD" }
+                        }
+                    }
+                }]
+            });
+        },
+        // Annuler la transaction
+        onCancel : function (data) {
+            alert("Transaction annulée !");
+        },
+        onApprove : function (data, actions) {
+            return actions.order.capture().then(function(details) {
+
+                // Afficher les details de la transaction dans la console
+                console.log(details);
+
+                // On affiche un message de succès
+                alert(details.payer.name.given_name + ' ' + details.payer.name.surname + ', votre transaction est effectuée. Vous allez recevoir une notification très bientôt lorsque nous validons votre paiement.');
+
+            });
+        }
+    }).render("#paypal-boutons");
+</script>
+</body>
+</html>
